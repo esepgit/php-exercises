@@ -1,3 +1,40 @@
+<?php
+  include("../../db.php");
+
+  if ($_POST) {
+    $primernombre = (isset($_POST['primernombre']) ? $_POST["primernombre"] : "");
+    $segundonombre = (isset($_POST['segundonombre']) ? $_POST["segundonombre"] : "");
+    $primerapellido = (isset($_POST['primerapellido']) ? $_POST["primerapellido"] : "");
+    $segundoapellido = (isset($_POST['segundoapellido']) ? $_POST["segundoapellido"] : "");
+    $foto = (isset($_FILES['foto']['name']) ? $_FILES["foto"]['name'] : "");
+    $cv = (isset($_FILES['cv']['name']) ? $_FILES["cv"]['name'] : "");
+    $idpuesto= (isset($_POST['idpuesto']) ? $_POST["idpuesto"] : "");
+    $fechadeingreso = (isset($_POST['fechadeingreso']) ? $_POST["fechadeingreso"] : "");
+
+    // preparar inserción de datos
+    $sentencia = $conexion->prepare("INSERT INTO empleados 
+    (id, primernombre, segundonombre, primerapellido, segundoapellido, foto, cv, idpuesto, fechadeingreso) 
+    VALUES (null, :primernombre, :segundonombre, :primerapellido, :segundoapellido, :foto, :cv, :idpuesto, :fechadeingreso)");
+
+    // asignando valores que vienen del método POST (formulario)
+    $sentencia->bindParam(":primernombre", $primernombre);
+    $sentencia->bindParam(":segundonombre", $segundonombre);
+    $sentencia->bindParam(":primerapellido", $primerapellido);
+    $sentencia->bindParam(":segundoapellido", $segundoapellido);
+    $sentencia->bindParam(":foto", $foto);
+    $sentencia->bindParam(":cv", $cv);
+    $sentencia->bindParam(":idpuesto", $idpuesto);
+    $sentencia->bindParam(":fechadeingreso", $fechadeingreso);
+
+    $sentencia->execute();
+    header("Location: index.php");
+  }
+
+  $sentencia = $conexion->prepare("SELECT * FROM `puestos`"); 
+  $sentencia->execute();
+  $lista_puestos =  $sentencia->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <?php include("../../templates/header.php"); ?>
 
 <div class="card">
@@ -85,20 +122,22 @@
           name="idpuesto"
           id="idpuesto"
         >
-          <option selected>Select one</option>
-          <option value="">New Delhi</option>
-          <option value="">Istanbul</option>
-          <option value="">Jakarta</option>
+        <option selected disabled>Selecciona</option>
+        <?php foreach ($lista_puestos as $registro) { ?>
+          <option value="<?php echo $registro['id']; ?>">
+            <?php echo $registro['nombredelpuesto']; ?>
+          </option>
+        <?php } ?>
         </select>
       </div>
       
       <div class="mb-3">
-        <label for="fechaingreso" class="form-label">Fecha de ingreso</label>
+        <label for="fechadeingreso" class="form-label">Fecha de ingreso</label>
         <input
           type="date"
           class="form-control"
-          name="fechaingreso"
-          id="fechaingreso"
+          name="fechadeingreso"
+          id="fechadeingreso"
           aria-describedby="emailHelpId"
           placeholder="Fecha de ingreso a empresa"
         />
@@ -118,15 +157,7 @@
         href="index.php"
         role="button"
         >Cancelar</a
-      >
-      
-      
-      
-      
-      
-      
-      
-      
+      > 
     </form>
   </div>
   <div class="card-footer text-muted"></div>

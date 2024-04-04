@@ -1,7 +1,25 @@
+<?php 
+  include("../../db.php");
+
+  if ($_POST) {
+    // recolectamos datos del método POST
+    $usuario = (isset($_POST['usuario']) ? $_POST["usuario"] : "");
+    $password = (isset($_POST['password']) ? $_POST["password"] : "");
+    $correo = (isset($_POST['correo']) ? $_POST["correo"] : "");
+    // preparar inserción de datos
+    $sentencia = $conexion->prepare("INSERT INTO usuarios (id, usuario, password, correo) VALUES (null, :usuario, :password, :correo)");
+    // asignando valores que vienen del método POST (formulario)
+    $sentencia->bindParam(":usuario", $usuario);
+    $sentencia->bindParam(":password", $password);
+    $sentencia->bindParam(":correo", $correo);
+    $sentencia->execute();
+    header("Location: index.php");
+  }
+?>
 <?php include("../../templates/header.php"); ?>
 
 <div class="card">
-  <div class="card-header">Dato del usuario</div>
+  <div class="card-header">Datos del usuario</div>
   <div class="card-body">
    <form action="" method="post" enctype="multipart/form-data">
     <div class="mb-3">
@@ -40,8 +58,6 @@
       />
     </div>
     
-    
-
     <button
       type="submit"
       class="btn btn-primary"

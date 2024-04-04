@@ -1,6 +1,14 @@
 <?php 
   include("../../db.php");
 
+  if (isset($_GET['txtID'])) {
+    $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
+    $sentencia = $conexion->prepare("DELETE FROM `usuarios` WHERE id = :id ");
+    $sentencia->bindParam(":id", $txtID);
+    $sentencia->execute();
+    header('Location: index.php');
+  }
+
   $sentencia = $conexion->prepare("SELECT * FROM `usuarios`"); 
   $sentencia->execute();
   $lista_usuarios =  $sentencia->fetchAll(PDO::FETCH_ASSOC);
@@ -44,13 +52,13 @@
         <td>
           <a
             class="btn btn-info"
-            href="editar.php?=<?php echo $usuario['id'] ;?>" ?
+            href="editar.php?txtID=<?php echo $usuario['id'] ;?>" ?
             role="button"
             >Editar</a
           >
           <a
             class="btn btn-danger"
-            href="index.php.php?=<?php echo $usuario['id'] ;?>" ?
+            href="index.php?txtID=<?php echo $usuario['id'] ;?>" ?
             role="button"
             >Eliminar</a
           >

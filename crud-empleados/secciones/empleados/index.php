@@ -1,3 +1,13 @@
+<?php
+  include("../../db.php");
+
+  $sentencia = $conexion->prepare("SELECT *,
+  (SELECT nombredelpuesto FROM puestos WHERE puestos.id = empleados.idpuesto limit 1) as puesto 
+  FROM `empleados`"); 
+  $sentencia->execute();
+  $lista_empleados =  $sentencia->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <?php include("../../templates/header.php"); ?>
 
 <div class="card">
@@ -21,6 +31,7 @@
       >
         <thead>
           <tr>
+            <th scope="col">ID</th>
             <th scope="col">Nombre</th>
             <th scope="col">Foto</th>
             <th scope="col">CV</th>
@@ -30,12 +41,19 @@
           </tr>
         </thead>
         <tbody>
+          <?php foreach ($lista_empleados as $registro) { ?>
           <tr class="">
-            <td scope="row">Furina</td>
-            <td>Imagen.jpeg</td>
-            <td>CV.pdf</td>
-            <td>Programador</td>
-            <td>1/1/1</td>
+            <td scope="row"><?php echo $registro['id']; ?></td>
+            <td>
+              <?php echo $registro['primernombre']; ?>
+              <?php echo $registro['segundonombre']; ?>
+              <?php echo $registro['primerapellido']; ?>
+              <?php echo $registro['segundoapellido']; ?>
+            </td>
+            <td><?php echo $registro['foto']; ?></td>
+            <td><?php echo $registro['cv']; ?></td>
+            <td><?php echo $registro['puesto']; ?></td>
+            <td><?php echo $registro['fechadeingreso']; ?></td>
             <td>
               <a
                 name=""
@@ -63,6 +81,7 @@
               >
             </td>
           </tr>
+          <?php } ?>
         </tbody>
       </table>
     </div>
